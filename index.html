@@ -4,6 +4,69 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Picture Upload</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 20px;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        button:active {
+            background-color: #3e8e41;
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        label {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #3498db;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+            display: inline-block;
+        }
+
+        label:hover {
+            background-color: #2980b9;
+        }
+
+        label:active {
+            background-color: #216a94;
+        }
+
+        img {
+            max-width: 100%;
+            max-height: 300px;
+            margin-top: 20px;
+            display: none;
+        }
+    </style>
 </head>
 <body>
 
@@ -13,10 +76,11 @@
 <button onclick="clearImage()">Clear</button>
 
 <!-- Input for file upload -->
+<label for="uploadInput">Upload Photo</label>
 <input type="file" accept="image/*" capture="camera" id="uploadInput" onchange="handleFileSelect(event)">
 
 <!-- Display the uploaded/taken image -->
-<img id="selectedImage" style="max-width: 100%; max-height: 300px; margin-top: 20px; display: none;">
+<img id="selectedImage">
 
 <!-- Script to display the image and clear functionality -->
 <script>
@@ -62,6 +126,7 @@
 
 </body>
 </html>
+
 
 
 
