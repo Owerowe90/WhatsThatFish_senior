@@ -9,13 +9,16 @@
 
 <h1>Upload or Take a Picture</h1>
 
+<!-- Clear button to reset the image and variable -->
+<button onclick="clearImage()">Clear</button>
+
 <!-- Input for file upload -->
 <input type="file" accept="image/*" capture="camera" id="uploadInput" onchange="handleFileSelect(event)">
 
 <!-- Display the uploaded/taken image -->
 <img id="selectedImage" style="max-width: 100%; max-height: 300px; margin-top: 20px; display: none;">
 
-<!-- Script to display the image -->
+<!-- Script to display the image and clear functionality -->
 <script>
     function handleFileSelect(event) {
         const input = event.target;
@@ -45,8 +48,20 @@
             reader.readAsDataURL(file);
         }
     }
+
+    function clearImage() {
+        // Clear the displayed image
+        const selectedImage = document.getElementById('selectedImage');
+        selectedImage.src = '';
+        selectedImage.style.display = 'none';
+
+        // Clear the "fish" variable
+        const fish = null;
+        console.log('Fish cleared:', fish);
+    }
 </script>
 
 </body>
 </html>
+
 
