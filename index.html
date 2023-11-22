@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Picture Upload</title>
+</head>
+<body>
+
+<h1>Upload or Take a Picture</h1>
+
+<!-- Input for file upload -->
+<input type="file" accept="image/*" capture="camera" id="uploadInput" onchange="handleFileSelect(event)">
+
+<!-- Display the uploaded/taken image -->
+<img id="selectedImage" style="max-width: 100%; max-height: 300px; margin-top: 20px; display: none;">
+
+<script>
+    function handleFileSelect(event) {
+        const input = event.target;
+        const file = input.files[0];
+
+        if (file) {
+            // Display the selected image
+            const selectedImage = document.getElementById('selectedImage');
+            selectedImage.src = URL.createObjectURL(file);
+            selectedImage.style.display = 'block';
+
+            // Save the image as a variable named "fish"
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                const imageDataURL = e.target.result;
+                const fish = {
+                    name: file.name,
+                    type: file.type,
+                    size: file.size,
+                    dataURL: imageDataURL
+                };
+
+                // You can now use the "fish" variable as needed
+                console.log('Fish:', fish);
+            };
+
+            reader.readAsDataURL(file);
+        }
+    }
+</script>
+
+</body>
+</html>
