@@ -6,76 +6,7 @@
     <title>Picture Upload</title>
 
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            margin: 20px;
-        }
-
-        h1 {
-            color: #333;
-        }
-
-        button {
-            padding: 10px 20px;
-            font-size: 16px;
-            cursor: pointer;
-            background-color: #4CAF50;
-            color: #fff;
-            border: none;
-            border-radius: 5px;
-            margin-bottom: 20px;
-            transition: background-color 0.3s;
-        }
-
-        button:hover {
-            background-color: #45a049;
-        }
-
-        button:active {
-            background-color: #3e8e41;
-        }
-
-        input[type="file"] {
-            display: none;
-        }
-
-        label {
-            padding: 10px 20px;
-            font-size: 16px;
-            cursor: pointer;
-            background-color: #3498db;
-            color: #fff;
-            border: none;
-            border-radius: 5px;
-            transition: background-color 0.3s;
-            display: inline-block;
-        }
-
-        label:hover {
-            background-color: #2980b9;
-        }
-
-        label:active {
-            background-color: #216a94;
-        }
-
-        #image-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-            margin-top: 20px;
-        }
-
-        #selectedImage {
-            max-width: 100%;
-            max-height: 300px;
-            border: 2px solid #ddd; /* Add a border */
-            border-radius: 5px;
-            margin-top: 10px;
-            display: none;
-        }
+        /* Your CSS styles here */
     </style>
 </head>
 <body>
@@ -94,8 +25,63 @@
     <img id="selectedImage">
 </div>
 
-<!-- Script to display the image and clear functionality -->
+<!-- Script to display the image and run the model -->
 <script>
+    // Your existing JavaScript code here
+
+    function runModel(imagePath) {
+        // Add the Pyodide script source
+        const script = document.createElement('script');
+        script.src = 'https://pyodide-cdn2.iodide.io/v0.15.0/full/pyodide.js';
+        script.async = true;
+        script.onload = function () {
+            // Initialize Pyodide
+            languagePluginLoader.then(() => {
+                // Your Python code
+                languagePluginLoader.loadLanguage("python").then(() => {
+                    const pythonCode = `
+import numpy as np
+import torch
+from torch import nn
+from torch import optim
+import torch.nn.functional as F
+from torchvision import datasets, transforms, models
+from PIL import Image
+import matplotlib.pyplot as plt
+
+test_transforms = transforms.Compose([
+    transforms.Resize((256, 256)),
+    transforms.ToTensor(),
+])
+
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+model = torch.load('/Users/owenrowe/Desktop/fish/fishmodel_above_90.pth', map_location=torch.device('cpu'))
+model.eval()
+
+def predict_image(image_pred):
+    image = Image.open(image_pred).convert("RGB")
+    image_tensor = test_transforms(image).float()
+    image_tensor = image_tensor.unsqueeze(0)
+    input = image_tensor.to(device)
+    output = model(input)
+    index = output.data.cpu().numpy().argmax()
+    classes = ['brook', 'brown', 'cutthroat', 'rainbow', 'tiger', 'other']
+    predicted_class = classes[index]
+    plt.imshow(image)
+    plt.show()
+    return predicted_class
+
+image_pred = '${imagePath}';
+predicted_class = predict_image(image_pred);
+console.log("Predicted class:", predicted_class);
+                `;
+                    languagePluginLoader.runPython(pythonCode);
+                });
+            });
+        };
+        document.head.appendChild(script);
+    }
+
     function handleFileSelect(event) {
         const input = event.target;
         const file = input.files[0];
@@ -106,21 +92,8 @@
             selectedImage.src = URL.createObjectURL(file);
             selectedImage.style.display = 'block';
 
-            // Save the image as a variable named "fish"
-            const reader = new FileReader();
-            reader.onload = function (e) {
-                const imageDataURL = e.target.result;
-                const fish = {
-                    type: file.type,
-                    size: file.size,
-                    dataURL: imageDataURL
-                };
-
-                // You can now use the "fish" variable as needed
-                console.log('Fish:', fish);
-            };
-
-            reader.readAsDataURL(file);
+            // Run the model with the uploaded image
+            runModel(URL.createObjectURL(file));
         }
     }
 
@@ -129,16 +102,11 @@
         const selectedImage = document.getElementById('selectedImage');
         selectedImage.src = '';
         selectedImage.style.display = 'none';
-
-        // Clear the "fish" variable
-        const fish = null;
-        console.log('Fish cleared:', fish);
     }
 </script>
 
 </body>
 </html>
-
 
 
 
