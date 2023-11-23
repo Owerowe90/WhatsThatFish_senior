@@ -1,8 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <link rel="stylesheet" href="https://pyscript.net/releases/2023.11.1/core.css" />
-    <script type="module" src="https://pyscript.net/releases/2023.11.1/core.js"></script>
+    <link
+        rel="stylesheet"
+        href="https://pyscript.net/releases/2023.11.1/core.css"
+    />
+    <script
+        type="module"
+        src="https://pyscript.net/releases/2023.11.1/core.js"
+    ></script>
+    
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Picture Upload</title>
@@ -99,19 +106,11 @@
 
 <!-- PyScript code -->
 
-<!-- PyScript code -->
-
-<py-config>
-    plugins = [
-        "https://pyscript.net/latest/plugins/python/py_tutor.py"
-    ]
-</py-config>
-
-<section class="pyscript">
-    <py-script>
-        console.log("hello world");
-    </py-script>
-</section>
+<script type="py" terminal>
+    from pyscript import display
+    display("Hello World!") # this goes to the DOM
+    print("Hello terminal") # this goes to the terminal
+</script>
 
 <script>
     // Your existing JavaScript code here
