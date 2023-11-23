@@ -107,34 +107,42 @@
 <!-- PyScript code -->
 <script type="py">
     from pyscript import display
-    import torch
-    from torchvision import transforms, models
-    from PIL import Image
     import matplotlib.pyplot as plt
 
-    test_transforms = transforms.Compose([
-        transforms.Resize((256, 256)),
-        transforms.ToTensor(),
-    ])
+    try:
+        # Try to load the torch package
+        import torch
+        from torchvision import transforms, models
+        from PIL import Image
 
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        test_transforms = transforms.Compose([
+            transforms.Resize((256, 256)),
+            transforms.ToTensor(),
+        ])
 
-    model_path = 'fishmodel_above_90.pth'
-    model = torch.load(model_path, map_location=torch.device('cpu'))
-    model.eval()
+        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-    def predict_image(image_path):
-        image = Image.open(image_path).convert("RGB")
-        image_tensor = test_transforms(image).float()
-        image_tensor = image_tensor.unsqueeze(0)
-        input = image_tensor.to(device)
-        output = model(input)
-        index = output.data.cpu().numpy().argmax()
-        classes = ['brook', 'brown', 'cutthroat', 'rainbow', 'tiger', 'other']
-        predicted_class = classes[index]
-        plt.imshow(image)
-        plt.show()  # Show the image
-        return predicted_class
+        model_path = 'fishmodel_above_90.pth'
+        model = torch.load(model_path, map_location=torch.device('cpu'))
+        model.eval()
+
+        def predict_image(image_path):
+            image = Image.open(image_path).convert("RGB")
+            image_tensor = test_transforms(image).float()
+            image_tensor = image_tensor.unsqueeze(0)
+            input = image_tensor.to(device)
+            output = model(input)
+            index = output.data.cpu().numpy().argmax()
+            classes = ['brook', 'brown', 'cutthroat', 'rainbow', 'tiger', 'other']
+            predicted_class = classes[index]
+            plt.imshow(image)
+            plt.show()  # Show the image
+            return predicted_class
+
+    except ModuleNotFoundError:
+        # Display a message if torch is not available
+        display("PyTorch not available in this environment.")
+        predict_image = None  # Set predict_image to None to avoid errors
 
 </script>
 
@@ -149,15 +157,20 @@
         selectedImage.src = image_pred1;
         selectedImage.style.display = 'block';
 
-        // Call the predict_image function
-        var predicted_class1 = predict_image(image_pred1);
-
-        // Display the result
-        display("Predicted class:", predicted_class1);
+        // Call the predict_image function if available
+        if (predict_image) {
+            var predicted_class1 = predict_image(image_pred1);
+            // Display the result
+            display("Predicted class:", predicted_class1);
+        } else {
+            // Display a message if predict_image is not available
+            display("Predict_image not available.");
+        }
     });
 
     display("Hello World!"); // this goes to the DOM
 </script>
+
 
 </body>
 </html>
