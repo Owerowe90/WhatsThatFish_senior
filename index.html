@@ -99,47 +99,49 @@
 
 <!-- PyScript code -->
 <py-script>
-    # Load the numpy package asynchronously
-    pyodide.loadPackage("numpy").then(() == {
-    
-    # Rest of your Python code
-    import numpy as np
-    import torch
-    import torch.nn as nn
-    import torch.optim as optim
-    import torch.nn.functional as F
-    from torchvision import datasets, transforms, models
-    from PIL import Image
-    import matplotlib.pyplot as plt
+    // Load the numpy package asynchronously
+    pyodide.loadPackage("numpy").then(() => {
+        // Rest of your Python code
+        const np = pyodide.pyimport("numpy");
+        const torch = pyodide.pyimport("torch");
+        const nn = pyodide.pyimport("torch.nn");
+        const optim = pyodide.pyimport("torch.optim");
+        const F = pyodide.pyimport("torch.nn.functional");
+        const datasets = pyodide.pyimport("torchvision.datasets");
+        const transforms = pyodide.pyimport("torchvision.transforms");
+        const models = pyodide.pyimport("torchvision.models");
+        const Image = pyodide.pyimport("PIL.Image");
+        const plt = pyodide.pyimport("matplotlib.pyplot");
 
-    test_transforms = transforms.Compose([
-        transforms.Resize((256, 256)),
-        transforms.ToTensor(),
-    ])
+        // Your existing Python code here
+        const test_transforms = transforms.Compose([
+            transforms.Resize([256, 256]),
+            transforms.ToTensor(),
+        ]);
 
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    model = torch.load('fishmodel_above_90.pth', map_location=torch.device('cpu'))
-    model.eval()
+        const device = torch.device("cuda" if torch.cuda.is_available() else "cpu");
+        const model = torch.load('fishmodel_above_90.pth', { map_location: torch.device('cpu') });
+        model.eval();
 
-    def predict_image(image_pred):
-        image = Image.open(image_pred).convert("RGB")
-        image_tensor = test_transforms(image).float()
-        image_tensor = image_tensor.unsqueeze(0)
-        input = image_tensor.to(device)
-        output = model(input)
-        index = output.data.cpu().numpy().argmax()
-        classes = ['brook', 'brown', 'cutthroat', 'rainbow', 'tiger', 'other']
-        predicted_class = classes[index]
-        plt.imshow(image)
-        plt.show()
-        return predicted_class
+        function predict_image(image_pred) {
+            const image = Image.open(image_pred).convert("RGB");
+            const image_tensor = test_transforms(image).float();
+            const input = image_tensor.unsqueeze(0).to(device);
+            const output = model(input);
+            const index = output.data.cpu().numpy().argmax();
+            const classes = ['brook', 'brown', 'cutthroat', 'rainbow', 'tiger', 'other'];
+            const predicted_class = classes[index];
+            plt.imshow(image);
+            plt.show();
+            return predicted_class;
+        }
 
-    image_pred = '${imagePath}';
-    predicted_class = predict_image(image_pred);
-    console.log("Predicted class:", predicted_class);
+        const image_pred = '${imagePath}';
+        const predicted_class = predict_image(image_pred);
+        console.log("Predicted class:", predicted_class);
 
-    # Display predicted class in the HTML
-    document.getElementById('predictedClass').textContent = "Predicted Class: " + predicted_class;
+        // Display predicted class in the HTML
+        document.getElementById('predictedClass').textContent = "Predicted Class: " + predicted_class;
     });
 </py-script>
 
