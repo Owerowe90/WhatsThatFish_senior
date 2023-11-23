@@ -99,9 +99,9 @@
 
 <!-- PyScript code -->
 <py-script>
-    // Load the numpy package asynchronously
+    # Load the numpy package asynchronously
     pyodide.loadPackage("numpy").then(() => {
-        // Rest of your Python code
+        # Rest of your Python code
         const np = pyodide.pyimport("numpy");
         const torch = pyodide.pyimport("torch");
         const nn = pyodide.pyimport("torch.nn");
@@ -113,7 +113,7 @@
         const Image = pyodide.pyimport("PIL.Image");
         const plt = pyodide.pyimport("matplotlib.pyplot");
 
-        // Your existing Python code here
+        # Your existing Python code here
         const test_transforms = transforms.Compose([
             transforms.Resize([256, 256]),
             transforms.ToTensor(),
@@ -140,7 +140,7 @@
         const predicted_class = predict_image(image_pred);
         console.log("Predicted class:", predicted_class);
 
-        // Display predicted class in the HTML
+        # Display predicted class in the HTML
         document.getElementById('predictedClass').textContent = "Predicted Class: " + predicted_class;
     });
 </py-script>
