@@ -137,7 +137,7 @@
         plt.show()  # Show the image
         return predicted_class
     
-    const imageInput = document.getElementById('uploadInput');
+    imageInput = document.getElementById('uploadInput');
     imageInput.addEventListener('change', function(event) {
         file = event.target.files[0];
         image_pred1 = URL.createObjectURL(file);
