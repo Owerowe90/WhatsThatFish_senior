@@ -105,47 +105,52 @@
 </div>
 
 <!-- PyScript code -->
+<!-- PyScript code -->
 <script type="py">
-    await micropip.install("matplotlib")
-    from pyscript import display
-    import matplotlib.pyplot as plt
+    // IIFE to use await
+    (async () => {
+        // Install matplotlib using micropip
+        await pyodide.runPythonAsync('await micropip.install("matplotlib")');
 
-    try:
-        # Try to load the torch package
-        import torch
-        from torchvision import transforms, models
-        from PIL import Image
+        // Continue with the rest of the code
+        try {
+            // Try to load the torch package
+            import torch
+            from torchvision import transforms, models
+            from PIL import Image
 
-        test_transforms = transforms.Compose([
-            transforms.Resize((256, 256)),
-            transforms.ToTensor(),
-        ])
+            test_transforms = transforms.Compose([
+                transforms.Resize((256, 256)),
+                transforms.ToTensor(),
+            ])
 
-        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+            device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-        model_path = 'fishmodel_above_90.pth'
-        model = torch.load(model_path, map_location=torch.device('cpu'))
-        model.eval()
+            model_path = 'fishmodel_above_90.pth'
+            model = torch.load(model_path, map_location=torch.device('cpu'))
+            model.eval()
 
-        def predict_image(image_path):
-            image = Image.open(image_path).convert("RGB")
-            image_tensor = test_transforms(image).float()
-            image_tensor = image_tensor.unsqueeze(0)
-            input = image_tensor.to(device)
-            output = model(input)
-            index = output.data.cpu().numpy().argmax()
-            classes = ['brook', 'brown', 'cutthroat', 'rainbow', 'tiger', 'other']
-            predicted_class = classes[index]
-            plt.imshow(image)
-            plt.show()  # Show the image
-            return predicted_class
+            def predict_image(image_path):
+                image = Image.open(image_path).convert("RGB")
+                image_tensor = test_transforms(image).float()
+                image_tensor = image_tensor.unsqueeze(0)
+                input = image_tensor.to(device)
+                output = model(input)
+                index = output.data.cpu().numpy().argmax()
+                classes = ['brook', 'brown', 'cutthroat', 'rainbow', 'tiger', 'other']
+                predicted_class = classes[index]
+                plt.imshow(image)
+                plt.show()  // Show the image
+                return predicted_class
 
-    except ModuleNotFoundError:
-        # Display a message if torch is not available
-        display("PyTorch not available in this environment.")
-        predict_image = None  # Set predict_image to None to avoid errors
-
+        } catch (ModuleNotFoundError) {
+            // Display a message if torch is not available
+            display("PyTorch not available in this environment.");
+            predict_image = None;  // Set predict_image to None to avoid errors
+        }
+    })();
 </script>
+
 
 <!-- JavaScript code -->
 <script>
