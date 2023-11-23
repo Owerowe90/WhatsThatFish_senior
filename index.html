@@ -55,7 +55,7 @@ test_transforms = transforms.Compose([
 ])
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-model = torch.load('/Users/owenrowe/Desktop/fish/fishmodel_above_90.pth', map_location=torch.device('cpu'))
+model = torch.load('fishmodel_above_90.pth', map_location=torch.device('cpu'))
 model.eval()
 
 def predict_image(image_pred):
