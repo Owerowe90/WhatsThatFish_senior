@@ -105,16 +105,11 @@
 </div>
 
 <!-- PyScript code -->
-<!-- PyScript code -->
 <script type="py">
-    // IIFE to use await
     (async () => {
-        // Install matplotlib using micropip
         await pyodide.runPythonAsync('await micropip.install("matplotlib")');
 
-        // Continue with the rest of the code
         try {
-            // Try to load the torch package
             import torch
             from torchvision import transforms, models
             from PIL import Image
@@ -144,9 +139,8 @@
                 return predicted_class
 
         } catch (ModuleNotFoundError) {
-            // Display a message if torch is not available
             display("PyTorch not available in this environment.");
-            predict_image = None;  // Set predict_image to None to avoid errors
+            predict_image = None;
         }
     })();
 </script>
