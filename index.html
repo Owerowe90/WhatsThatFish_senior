@@ -100,7 +100,7 @@
 <!-- PyScript code -->
 <py-script>
     # Load the numpy package asynchronously
-    pyodide.loadPackage("numpy").then(() => {
+    pyodide.loadPackage("numpy").then(function () {
         # Rest of your Python code
         const np = pyodide.pyimport("numpy");
         const torch = pyodide.pyimport("torch");
