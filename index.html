@@ -105,25 +105,24 @@
 </div>
 
 <!-- PyScript code -->
-
 <script type="py">
     from pyscript import display
     import torch
     from torchvision import transforms, models
     from PIL import Image
     import matplotlib.pyplot as plt
-    
+
     test_transforms = transforms.Compose([
         transforms.Resize((256, 256)),
         transforms.ToTensor(),
     ])
-    
+
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    
+
     model_path = 'fishmodel_above_90.pth'
     model = torch.load(model_path, map_location=torch.device('cpu'))
     model.eval()
-    
+
     def predict_image(image_path):
         image = Image.open(image_path).convert("RGB")
         image_tensor = test_transforms(image).float()
@@ -136,63 +135,28 @@
         plt.imshow(image)
         plt.show()  # Show the image
         return predicted_class
-    
-    # Attach a change event listener to the file input
-    imageInput = document.getElementById('uploadInput');
-    imageInput.addEventListener('change', function(event) {
-        file = event.target.files[0]
-        image_pred1 = URL.createObjectURL(file)
-        selectedImage = document.getElementById('selectedImage')
-        selectedImage.src = image_pred1
-        selectedImage.style.display = 'block'
-        
-        # Call the predict_image function
-        predicted_class1 = predict_image(image_pred1)
-        
-        # Display the result
-        display("Predicted class:", predicted_class1)
-        
-    })
 
-    display("Hello World!") # this goes to the DOM
 </script>
 
+<!-- JavaScript code -->
 <script>
-    // Your existing JavaScript code here
+    // Attach a change event listener to the file input
+    var imageInput = document.getElementById('uploadInput');
+    imageInput.addEventListener('change', function (event) {
+        var file = event.target.files[0];
+        var image_pred1 = URL.createObjectURL(file);
+        var selectedImage = document.getElementById('selectedImage');
+        selectedImage.src = image_pred1;
+        selectedImage.style.display = 'block';
 
-    function runModel(imagePath) {
-        // Run the PyScript code
-        executePyScript();
+        // Call the predict_image function
+        var predicted_class1 = predict_image(image_pred1);
 
-        function executePyScript() {
-            // PyScript code here
-        }
-    }
+        // Display the result
+        display("Predicted class:", predicted_class1);
+    });
 
-    function handleFileSelect(event) {
-        const input = event.target;
-        const file = input.files[0];
-
-        if (file) {
-            // Display the selected image
-            const selectedImage = document.getElementById('selectedImage');
-            selectedImage.src = URL.createObjectURL(file);
-            selectedImage.style.display = 'block';
-
-            // Run the model with the uploaded image
-            runModel(URL.createObjectURL(file));
-        }
-    }
-
-    function clearImage() {
-        // Clear the displayed image
-        const selectedImage = document.getElementById('selectedImage');
-        selectedImage.src = '';
-        selectedImage.style.display = 'none';
-
-        // Clear the predicted class
-        document.getElementById('predictedClass').textContent = '';
-    }
+    display("Hello World!"); // this goes to the DOM
 </script>
 
 </body>
