@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Picture Upload</title>
-    
+
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -69,9 +69,9 @@
         }
 
         #selectedImage {
-            max-width: 100%;
-            max-height: 300px;
-            border: 2px solid #ddd; /* Add a border */
+            width: 200px;
+            height: 200px;
+            border: 2px solid #ddd;
             border-radius: 5px;
             margin-top: 10px;
             display: none;
@@ -92,6 +92,7 @@
 <!-- Display the uploaded/taken image -->
 <div id="image-container">
     <img id="selectedImage">
+    <p id="predictedClass"></p>
 </div>
 
 <!-- Script to display the image and run the model -->
@@ -124,7 +125,7 @@ test_transforms = transforms.Compose([
 ])
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-model = torch.load('fishmodel_above_90.pth', map_location=torch.device('cpu'))
+model = torch.load('/Users/owenrowe/Desktop/fish/fishmodel_above_90.pth', map_location=torch.device('cpu'))
 model.eval()
 
 def predict_image(image_pred):
@@ -143,6 +144,9 @@ def predict_image(image_pred):
 image_pred = '${imagePath}';
 predicted_class = predict_image(image_pred);
 console.log("Predicted class:", predicted_class);
+
+// Display predicted class in the HTML
+document.getElementById('predictedClass').textContent = "Predicted Class: " + predicted_class;
                 `;
                     languagePluginLoader.runPython(pythonCode);
                 });
@@ -171,6 +175,9 @@ console.log("Predicted class:", predicted_class);
         const selectedImage = document.getElementById('selectedImage');
         selectedImage.src = '';
         selectedImage.style.display = 'none';
+
+        // Clear the predicted class
+        document.getElementById('predictedClass').textContent = '';
     }
 </script>
 
