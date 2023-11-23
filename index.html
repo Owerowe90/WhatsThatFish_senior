@@ -99,6 +99,10 @@
 
 <!-- PyScript code -->
 <py-script>
+    # Load the numpy package
+    await pyodide.loadPackage("numpy");
+    
+    # Rest of your Python code
     import numpy as np
     import torch
     from torch import nn
