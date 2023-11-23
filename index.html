@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <link rel="stylesheet" href="https://pyscript.net/releases/2023.11.1/core.css" />
+    <script type="module" src="https://pyscript.net/releases/2023.11.1/core.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Picture Upload</title>
@@ -69,8 +71,8 @@
         }
 
         #selectedImage {
-            width: 200px;
-            height: 200px;
+            width: 300px;
+            height: 300px;
             border: 2px solid #ddd;
             border-radius: 5px;
             margin-top: 10px;
@@ -96,20 +98,7 @@
 </div>
 
 <!-- Script to display the image and run the model -->
-<script>
-    // Your existing JavaScript code here
-
-    function runModel(imagePath) {
-        // Add the Pyodide script source
-        const script = document.createElement('script');
-        script.src = 'https://pyodide-cdn2.iodide.io/v0.15.0/full/pyodide.js';
-        script.async = true;
-        script.onload = function () {
-            // Initialize Pyodide
-            languagePluginLoader.then(() => {
-                // Your Python code
-                languagePluginLoader.loadLanguage("python").then(() => {
-                    const pythonCode = `
+<py-script>
 import numpy as np
 import torch
 from torch import nn
@@ -179,7 +168,7 @@ document.getElementById('predictedClass').textContent = "Predicted Class: " + pr
         // Clear the predicted class
         document.getElementById('predictedClass').textContent = '';
     }
-</script>
+</py-script>
 
 </body>
 </html>
