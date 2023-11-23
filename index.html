@@ -99,8 +99,8 @@
 
 <!-- PyScript code -->
 <py-script>
-    # Load the numpy package
-    await pyodide.loadPackage("numpy");
+    # Load the numpy package asynchronously
+    pyodide.loadPackage("numpy").then(() => {
     
     # Rest of your Python code
     import numpy as np
@@ -140,6 +140,7 @@
 
     # Display predicted class in the HTML
     document.getElementById('predictedClass').textContent = "Predicted Class: " + predicted_class;
+    });
 </py-script>
 
 <script>
