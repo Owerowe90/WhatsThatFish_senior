@@ -98,19 +98,13 @@
 </div>
 
 <!-- PyScript code -->
-<py-env>
 
--bokeh
-
--numpy
-
--matplotlib
-
--paths: 
-
--/utlis.py
-
-</py-env>
+<py-config>
+    plugins = [
+      "https://pyscript.net/latest/plugins/python/py_tutor.py"
+    ]
+</py-config>
+    
 <py-script>
 print("hello world")
 </py-script>
