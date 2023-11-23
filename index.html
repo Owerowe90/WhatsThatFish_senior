@@ -137,7 +137,6 @@
         plt.show()  # Show the image
         return predicted_class
     
-    // Set the value of image_pred1 dynamically using the user-uploaded image
     const imageInput = document.getElementById('uploadInput');
     imageInput.addEventListener('change', function(event) {
         file = event.target.files[0];
@@ -146,7 +145,6 @@
         selectedImage.src = image_pred1;
         selectedImage.style.display = 'block';
         
-        # Run the model with the uploaded image
         predicted_class1 = predict_image(image_pred1);
         display("Predicted class:", predicted_class1);
     });
