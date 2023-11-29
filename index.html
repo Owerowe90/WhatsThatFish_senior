@@ -104,7 +104,6 @@
     <p id="predictedClass"></p>
 </div>
 
-<!-- PyScript code -->
 <script type="py">
     (async () => {
         await pyodide.runPythonAsync('await micropip.install("matplotlib")');
@@ -152,7 +151,7 @@
         except ImportError:
             display("PyTorch not available in this environment.")
             predict_image = None;
-    })();
+    });
 </script>
 
 <!-- JavaScript code -->
