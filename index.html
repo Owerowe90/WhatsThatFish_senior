@@ -105,10 +105,6 @@
 </div>
 
 <script type="py">
-    (async () => {
-        await pyodide.runPythonAsync('await micropip.install("matplotlib")');
-
-        try {
             import torch
             from torchvision import transforms, models
             from PIL import Image
@@ -148,10 +144,6 @@
                 # Return the predicted class and base64 encoded image
                 return predicted_class, image_base64
 
-        except ImportError:
-            display("PyTorch not available in this environment.")
-            predict_image = None;
-    });
 </script>
 
 <!-- JavaScript code -->
