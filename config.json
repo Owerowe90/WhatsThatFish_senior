@@ -1,5 +1,5 @@
 {
-    "packages":["torch","torchvision","PIL","io","base64"],
+    "packages":["torch","torchvision","PIL","io"],
     "files": {
         "https://owerowe90.github.io/WhatsThatFish_senior/fishmodel_above_90.pth": "./fishmodel_above_90.pth"
    }
