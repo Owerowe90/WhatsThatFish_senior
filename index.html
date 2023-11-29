@@ -14,7 +14,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Picture Upload</title>
 
-    <style>
+<style>
             body {
             font-family: Arial, sans-serif;
             text-align: center;
@@ -113,6 +113,8 @@
             import torch
             from torchvision import transforms, models
             from PIL import Image
+            import io
+            import base64
 
             test_transforms = transforms.Compose([
                 transforms.Resize((256, 256)),
@@ -134,17 +136,24 @@
                 index = output.data.cpu().numpy().argmax()
                 classes = ['brook', 'brown', 'cutthroat', 'rainbow', 'tiger', 'other']
                 predicted_class = classes[index]
-                plt.imshow(image)
-                plt.show()  // Show the image
-                return predicted_class
 
-        } catch (ModuleNotFoundError) {
-            display("PyTorch not available in this environment.");
+                # Save the image to a BytesIO object
+                image_io = io.BytesIO()
+                plt.imshow(image)
+                plt.savefig(image_io, format='png')
+                plt.close()
+
+                # Convert the image to base64
+                image_base64 = base64.b64encode(image_io.getvalue()).decode('utf-8')
+
+                # Return the predicted class and base64 encoded image
+                return predicted_class, image_base64
+
+        except ImportError:
+            display("PyTorch not available in this environment.")
             predict_image = None;
-        }
     })();
 </script>
-
 
 <!-- JavaScript code -->
 <script>
@@ -159,9 +168,15 @@
 
         // Call the predict_image function if available
         if (predict_image) {
-            var predicted_class1 = predict_image(image_pred1);
+            var result = predict_image(image_pred1);
+            var predicted_class1 = result[0];
+            var image_base64 = result[1];
+
             // Display the result
             display("Predicted class:", predicted_class1);
+
+            // Display the base64 encoded image (if needed)
+            // console.log(image_base64);
         } else {
             // Display a message if predict_image is not available
             display("Predict_image not available.");
@@ -170,7 +185,6 @@
 
     display("Hello World!"); // this goes to the DOM
 </script>
-
 
 </body>
 </html>
