@@ -14,6 +14,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Picture Upload</title>
 
+
 <style>
             body {
             font-family: Arial, sans-serif;
@@ -104,81 +105,61 @@
     <p id="predictedClass"></p>
 </div>
 
-<script type="py">
-            import torch
-            from torchvision import transforms, models
-            from PIL import Image
-            import io
-            import base64
-
-            test_transforms = transforms.Compose([
-                transforms.Resize((256, 256)),
-                transforms.ToTensor(),
-            ])
-
-            device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
-            model_path = 'fishmodel_above_90.pth'
-            model = torch.load(model_path, map_location=torch.device('cpu'))
-            model.eval()
-
-            def predict_image(image_path):
-                image = Image.open(image_path).convert("RGB")
-                image_tensor = test_transforms(image).float()
-                image_tensor = image_tensor.unsqueeze(0)
-                input = image_tensor.to(device)
-                output = model(input)
-                index = output.data.cpu().numpy().argmax()
-                classes = ['brook', 'brown', 'cutthroat', 'rainbow', 'tiger', 'other']
-                predicted_class = classes[index]
-
-                # Save the image to a BytesIO object
-                image_io = io.BytesIO()
-                plt.imshow(image)
-                plt.savefig(image_io, format='png')
-                plt.close()
-
-                # Convert the image to base64
-                image_base64 = base64.b64encode(image_io.getvalue()).decode('utf-8')
-
-                # Return the predicted class and base64 encoded image
-                return predicted_class, image_base64
-
-</script>
-
 <!-- JavaScript code -->
 <script>
-    // Attach a change event listener to the file input
-    var imageInput = document.getElementById('uploadInput');
-    imageInput.addEventListener('change', function (event) {
-        var file = event.target.files[0];
-        var image_pred1 = URL.createObjectURL(file);
-        var selectedImage = document.getElementById('selectedImage');
-        selectedImage.src = image_pred1;
-        selectedImage.style.display = 'block';
+    async function predictImage(imageDataURL) {
+        // Make an HTTP POST request to your server
+        const response = await fetch('http://127.0.0.1:8000/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ image: imageDataURL }),
+        });
 
-        // Call the predict_image function if available
-        if (predict_image) {
-            var result = predict_image(image_pred1);
-            var predicted_class1 = result[0];
-            var image_base64 = result[1];
+        // Parse the response JSON
+        const result = await response.json();
 
-            // Display the result
-            display("Predicted class:", predicted_class1);
+        // Display the predicted class
+        display('Predicted class:', result.predicted_class);
+    }
 
-            // Display the base64 encoded image (if needed)
-            // console.log(image_base64);
-        } else {
-            // Display a message if predict_image is not available
-            display("Predict_image not available.");
+    function handleFileSelect(event) {
+        const file = event.target.files[0];
+
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                const imageDataURL = e.target.result;
+                const selectedImage = document.getElementById('selectedImage');
+                selectedImage.src = imageDataURL;
+                selectedImage.style.display = 'block';
+
+                // Call the predictImage function
+                predictImage(imageDataURL);
+            };
+            reader.readAsDataURL(file);
         }
-    });
+    }
 
-    display("Hello World!"); // this goes to the DOM
+    function clearImage() {
+        const selectedImage = document.getElementById('selectedImage');
+        selectedImage.src = '';
+        selectedImage.style.display = 'none';
+        display('Predicted class:', '');  // Clear the predicted class display
+    }
+
+    function display(label, text) {
+        const predictedClass = document.getElementById('predictedClass');
+        predictedClass.innerHTML = `<strong>${label}</strong> ${text}`;
+    }
+
+    display('Hello World!'); // this goes to the DOM
 </script>
 
 </body>
 </html>
+
 
 
 
