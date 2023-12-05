@@ -111,7 +111,7 @@
         const blob = dataURItoBlob(imageDataURL);
         formData.append('image', blob, 'image.png');
 
-        const response = await fetch('http://127.0.0.1:8000/run/', {
+        const response = await fetch('http://127.0.0.1:8000/myprojectApp/run/', {
             method: 'POST',
             body: formData,
         });
