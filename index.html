@@ -109,7 +109,7 @@
 <script>
     async function predictImage(imageDataURL) {
         // Make an HTTP POST request to your server
-        const response = await fetch('http://127.0.0.1:8000/runModel/', {
+        const response = await fetch('http://127.0.0.1:8000/run/', {
             method: 'POST',
             headers: {
                 'Content-Type': 'multipart/form-data',
