@@ -109,71 +109,6 @@
 <script>
     async function predictImage(imageDataURL) {
         // Make an HTTP POST request to your server
-        const response = await fetch('http://127.0.0.1:8000', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'multipart/form-data',
-            },
-            body: createFormData(imageDataURL),
-        });
-
-        // Parse the response JSON
-        const result = await response.json();
-
-        // Display the predicted class
-        display('Predicted class:', result.predicted_class);
-    }
-
-    function createFormData(imageDataURL) {
-        const formData = new FormData();
-        const blob = dataURItoBlob(imageDataURL);
-        formData.append('image', blob, 'image.png');
-        return formData;
-    }
-
-    function dataURItoBlob(dataURI) {
-        const byteString = atob(dataURI.split(',')[1]);
-        const mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
-        const ab = new ArrayBuffer(byteString.length);
-        const ia = new Uint8Array(ab);
-        for (let i = 0; i < byteString.length; i++) {
-            ia[i] = byteString.charCodeAt(i);
-        }
-        return new Blob([ab], { type: mimeString });
-    }
-
-    function handleFileSelect(event) {
-        const file = event.target.files[0];
-
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = function (e) {
-                const imageDataURL = e.target.result;
-                const selectedImage = document.getElementById('selectedImage');
-                selectedImage.src = imageDataURL;
-                selectedImage.style.display = 'block';
-
-                // Call the predictImage function
-                predictImage(imageDataURL);
-            };
-            reader.readAsDataURL(file);
-        }
-    }
-
-    function clearImage() {
-        const selectedImage = document.getElementById('selectedImage');
-        selectedImage.src = '';
-        selectedImage.style.display = 'none';
-        display('Predicted class:', '');  // Clear the predicted class display
-    }
-
-    function display(label, text) {
-        const predictedClass = document.getElementById('predictedClass');
-        predictedClass.innerHTML = `<strong>${label}</strong> ${text}`;
-    }
-<script>
-    async function predictImage(imageDataURL) {
-        // Make an HTTP POST request to your server
         const response = await fetch('http://127.0.0.1:8000/runModel/', {
             method: 'POST',
             headers: {
@@ -236,9 +171,7 @@
         const predictedClass = document.getElementById('predictedClass');
         predictedClass.innerHTML = `<strong>${label}</strong> ${text}`;
     }
-
-    display('Hello World!'); // this goes to the DOM
-</script>
+    
 </script>
 
 </body>
