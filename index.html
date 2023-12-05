@@ -134,7 +134,35 @@
         return new Blob([ab], { type: mimeString });
     }
 
-    // Other functions remain unchanged
+    function handleFileSelect(event) {
+        const file = event.target.files[0];
+
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                const imageDataURL = e.target.result;
+                const selectedImage = document.getElementById('selectedImage');
+                selectedImage.src = imageDataURL;
+                selectedImage.style.display = 'block';
+
+                // Call the predictImage function
+                predictImage(imageDataURL);
+            };
+            reader.readAsDataURL(file);
+        }
+    }
+
+    function clearImage() {
+        const selectedImage = document.getElementById('selectedImage');
+        selectedImage.src = '';
+        selectedImage.style.display = 'none';
+        display('Predicted class:', '');  // Clear the predicted class display
+    }
+
+    function display(label, text) {
+        const predictedClass = document.getElementById('predictedClass');
+        predictedClass.innerHTML = `<strong>${label}</strong> ${text}`;
+    }
 </script>
 
 </body>
