@@ -105,62 +105,53 @@
 
 <!-- JavaScript code -->
 <script>
-async function predictImage(imageDataURL) {
-    // Create FormData object
-    const formData = new FormData();
+        // Create FormData object
+        const formData = new FormData();
 
-    // Convert data URI to blob
-    const blob = dataURItoBlob(imageDataURL);
+        // Append the base64 data to FormData with the key 'image'
+        formData.append('image', base64Data);
 
-    // Append the blob to FormData with the key 'image'
-    formData.append('image', blob, 'image.png');
+        // Display FormData for debugging
+        console.log(formData);
 
-    // Display FormData for debugging
-    console.log(formData);
-    // display(formData);
+        // Make an HTTP POST request to your server
+        const response = await fetch('http://127.0.0.1:8000/myprojectApp/run/', {
+            method: 'POST',
+            body: formData,
+        });
 
-    // Make an HTTP POST request to your server
-    const response = await fetch('http://127.0.0.1:8000/myprojectApp/run/', {
-        method: 'POST',
-        body: formData,
-    });
+        // Parse the response JSON
+        const result = await response.json();
 
-    // Parse the response JSON
-    const result = await response.json();
-
-    // Display the predicted class
-    // display('Predicted class:', result.predicted_class);
-}
-
-function dataURItoBlob(dataURI) {
-    const byteString = atob(dataURI.split(',')[1]);
-    const mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
-    const ab = new ArrayBuffer(byteString.length);
-    const ia = new Uint8Array(ab);
-    for (let i = 0; i < byteString.length; i++) {
-        ia[i] = byteString.charCodeAt(i);
+        // Display the predicted class
+        display('Predicted class:', result.predicted_class);
     }
-    return new Blob([ab], { type: mimeString });
-}
 
-function handleFileSelect(event) {
-    const file = event.target.files[0];
+    function convertToBase64() {
+        const selectedImage = document.getElementById('selectedImage');
 
-    if (file) {
-        const reader = new FileReader();
-        reader.onload = function (e) {
-            const imageDataURL = e.target.result;
-            const selectedImage = document.getElementById('selectedImage');
-            selectedImage.src = imageDataURL;
-            selectedImage.style.display = 'block';
+        if (selectedImage.src) {
+            const canvas = document.createElement('canvas');
+            const context = canvas.getContext('2d');
+            canvas.width = selectedImage.width;
+            canvas.height = selectedImage.height;
 
-            // Call the predictImage function
-            predictImage(imageDataURL);
-        };
-        reader.readAsDataURL(file);
+            context.drawImage(selectedImage, 0, 0, selectedImage.width, selectedImage.height);
+
+            const base64String = canvas.toDataURL('image/jpeg').split(',')[1];
+            console.log("Base64 representation of the image:\n", base64String);
+
+            // Call the predictImage function with the base64 data
+            predictImage(base64String);
+        } else {
+            console.error("No image selected.");
+        }
     }
-}
 
+    function display(label, text) {
+        const predictedClass = document.getElementById('predictedClass');
+        predictedClass.innerHTML = `<strong>${label}</strong> ${text}`;
+    }
 
     function clearImage() {
         const selectedImage = document.getElementById('selectedImage');
