@@ -116,7 +116,8 @@ async function predictImage(imageDataURL) {
     formData.append('image', blob, 'image.png');
 
     // Display FormData for debugging
-    display(formData);
+    console.log(formData);
+    // display(formData);
 
     // Make an HTTP POST request to your server
     const response = await fetch('http://127.0.0.1:8000/myprojectApp/run/', {
