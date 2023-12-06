@@ -110,7 +110,9 @@
         const formData = new FormData();
         const blob = dataURItoBlob(imageDataURL);
         formData.append('image', blob, 'image.png');
-
+        
+        display(formData);
+        
         const response = await fetch('http://127.0.0.1:8000/myprojectApp/run/', {
             method: 'POST',
             body: formData,
@@ -120,7 +122,7 @@
         const result = await response.json();
 
         // Display the predicted class
-        display('Predicted class:', result.predicted_class);
+        // display('Predicted class:', result.predicted_class);
     }
 
     function dataURItoBlob(dataURI) {
