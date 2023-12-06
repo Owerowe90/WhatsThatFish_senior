@@ -105,54 +105,61 @@
 
 <!-- JavaScript code -->
 <script>
-    async function predictImage(imageDataURL) {
-        // Make an HTTP POST request to your server
-        const formData = new FormData();
-        const blob = dataURItoBlob(imageDataURL);
-        formData.append('image', blob, 'image.png');
-        
-        display(formData);
-        
-        const response = await fetch('http://127.0.0.1:8000/myprojectApp/run/', {
-            method: 'POST',
-            body: formData,
-        });
+async function predictImage(imageDataURL) {
+    // Create FormData object
+    const formData = new FormData();
 
-        // Parse the response JSON
-        const result = await response.json();
+    // Convert data URI to blob
+    const blob = dataURItoBlob(imageDataURL);
 
-        // Display the predicted class
-        // display('Predicted class:', result.predicted_class);
+    // Append the blob to FormData with the key 'image'
+    formData.append('image', blob, 'image.png');
+
+    // Display FormData for debugging
+    display(formData);
+
+    // Make an HTTP POST request to your server
+    const response = await fetch('http://127.0.0.1:8000/myprojectApp/run/', {
+        method: 'POST',
+        body: formData,
+    });
+
+    // Parse the response JSON
+    const result = await response.json();
+
+    // Display the predicted class
+    // display('Predicted class:', result.predicted_class);
+}
+
+function dataURItoBlob(dataURI) {
+    const byteString = atob(dataURI.split(',')[1]);
+    const mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
+    const ab = new ArrayBuffer(byteString.length);
+    const ia = new Uint8Array(ab);
+    for (let i = 0; i < byteString.length; i++) {
+        ia[i] = byteString.charCodeAt(i);
     }
+    return new Blob([ab], { type: mimeString });
+}
 
-    function dataURItoBlob(dataURI) {
-        const byteString = atob(dataURI.split(',')[1]);
-        const mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
-        const ab = new ArrayBuffer(byteString.length);
-        const ia = new Uint8Array(ab);
-        for (let i = 0; i < byteString.length; i++) {
-            ia[i] = byteString.charCodeAt(i);
-        }
-        return new Blob([ab], { type: mimeString });
+function handleFileSelect(event) {
+    const file = event.target.files[0];
+
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            const imageDataURL = e.target.result;
+            const selectedImage = document.getElementById('selectedImage');
+            selectedImage.src = imageDataURL;
+            selectedImage.style.display = 'block';
+
+            // Call the predictImage function
+            predictImage(imageDataURL);
+        };
+        reader.readAsDataURL(file);
     }
+}
 
-    function handleFileSelect(event) {
-        const file = event.target.files[0];
-
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = function (e) {
-                const imageDataURL = e.target.result;
-                const selectedImage = document.getElementById('selectedImage');
-                selectedImage.src = imageDataURL;
-                selectedImage.style.display = 'block';
-
-                // Call the predictImage function
-                predictImage(imageDataURL);
-            };
-            reader.readAsDataURL(file);
-        }
-    }
 
     function clearImage() {
         const selectedImage = document.getElementById('selectedImage');
