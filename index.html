@@ -1,24 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <link rel="stylesheet" href="https://pyscript.net/releases/2023.11.1/core.css" />
-    <script type="module" src="https://pyscript.net/releases/2023.11.1/core.js"></script>
-    
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Picture Upload</title>
-
- <style>
+    <title>What's That Fish?</title>
+    <style>
         body {
-            font-family: Arial, sans-serif;
             text-align: center;
-            margin: 20px;
+            margin-top: 50px;
         }
-
         h1 {
             color: #333;
         }
-
+        #image-display, #api-response {
+            max-width: 80%;
+            max-height: 500px;
+            margin: 20px auto;
+            display: block; /* Center the image and response */
+        }
         button {
             padding: 10px 20px;
             font-size: 16px;
@@ -27,42 +26,18 @@
             color: #fff;
             border: none;
             border-radius: 5px;
-            margin-bottom: 20px;
+            margin-right: 10px; /* Add margin between buttons */
             transition: background-color 0.3s;
         }
-
         button:hover {
             background-color: #45a049;
         }
-
         button:active {
             background-color: #3e8e41;
         }
-
         input[type="file"] {
             display: none;
         }
-
-        label {
-            padding: 10px 20px;
-            font-size: 16px;
-            cursor: pointer;
-            background-color: #3498db;
-            color: #fff;
-            border: none;
-            border-radius: 5px;
-            transition: background-color 0.3s;
-            display: inline-block;
-        }
-
-        label:hover {
-            background-color: #2980b9;
-        }
-
-        label:active {
-            background-color: #216a94;
-        }
-
         #image-container {
             display: flex;
             justify-content: center;
@@ -70,7 +45,6 @@
             flex-direction: column;
             margin-top: 20px;
         }
-
         #selectedImage {
             width: 300px;
             height: 300px;
@@ -79,7 +53,6 @@
             margin-top: 10px;
             display: none;
         }
-
         #predictedClass {
             margin-top: 100px;
             font-size: 22px;
@@ -87,84 +60,68 @@
     </style>
 </head>
 <body>
+    <h1>What's That Fish?</h1>
+    <input type="file" id="image-input" accept="image/*" style="display: none;" onchange="displayImage(event)">
+    <button onclick="document.getElementById('image-input').click()">Upload Image</button>
+    <button onclick="runModel()">Run Model</button>
+    <button onclick="clearAll()">Clear</button>
+    <br>
+    <img id="image-display" style="display: none;"/>
+    <div id="api-response"></div>
+    
+    <script>
+        var selectedImageFile;
 
-<h1>Upload or Take a Picture</h1>
-
-<!-- Clear button to reset the image and variable -->
-<button onclick="clearImage()">Clear</button>
-
-<!-- Input for file upload -->
-<label for="uploadInput">Upload Photo</label>
-<input type="file" accept="image/*" capture="camera" id="uploadInput" onchange="handleFileSelect(event)">
-
-<!-- Display the uploaded/taken image -->
-<div id="image-container">
-    <img id="selectedImage">
-    <p id="predictedClass"></p>
-</div>
-
-<!-- JavaScript code -->
-<script>
-        // Create FormData object
-        const formData = new FormData();
-
-        // Append the base64 data to FormData with the key 'image'
-        formData.append('image', base64Data);
-
-        // Display FormData for debugging
-        console.log(formData);
-
-        // Make an HTTP POST request to your server
-        const response = await fetch('http://127.0.0.1:8000/myprojectApp/run/', {
-            method: 'POST',
-            body: formData,
-        });
-
-        // Parse the response JSON
-        const result = await response.json();
-
-        // Display the predicted class
-        display('Predicted class:', result.predicted_class);
-    }
-
-    function convertToBase64() {
-        const selectedImage = document.getElementById('selectedImage');
-
-        if (selectedImage.src) {
-            const canvas = document.createElement('canvas');
-            const context = canvas.getContext('2d');
-            canvas.width = selectedImage.width;
-            canvas.height = selectedImage.height;
-
-            context.drawImage(selectedImage, 0, 0, selectedImage.width, selectedImage.height);
-
-            const base64String = canvas.toDataURL('image/jpeg').split(',')[1];
-            console.log("Base64 representation of the image:\n", base64String);
-
-            // Call the predictImage function with the base64 data
-            predictImage(base64String);
-        } else {
-            console.error("No image selected.");
+        function displayImage(event) {
+            var image = document.getElementById('image-display');
+            var responseDiv = document.getElementById('api-response');
+            selectedImageFile = event.target.files[0];
+            image.src = URL.createObjectURL(selectedImageFile);
+            image.style.display = 'block';
+            responseDiv.innerHTML = ''; // Clear any previous API response
         }
-    }
 
-    function display(label, text) {
-        const predictedClass = document.getElementById('predictedClass');
-        predictedClass.innerHTML = `<strong>${label}</strong> ${text}`;
-    }
+        function clearAll() {
+            var image = document.getElementById('image-display');
+            var responseDiv = document.getElementById('api-response');
+            image.src = '';
+            image.style.display = 'none';
+            responseDiv.innerHTML = '';
+            selectedImageFile = null;
+        }
 
-    function clearImage() {
-        const selectedImage = document.getElementById('selectedImage');
-        selectedImage.src = '';
-        selectedImage.style.display = 'none';
-        display('Predicted class:', '');  // Clear the predicted class display
-    }
+        function runModel() {
+            if (selectedImageFile) {
+                var reader = new FileReader();
+                reader.readAsDataURL(selectedImageFile);
+                reader.onloadend = function() {
+                    var base64String = reader.result;
+                    var base64Data = base64String.split(',')[1];
 
-    function display(label, text) {
-        const predictedClass = document.getElementById('predictedClass');
-        predictedClass.innerHTML = `<strong>${label}</strong> ${text}`;
-    }
-</script>
+                    fetch('http://127.0.0.1:8000/myprojectApp/run/', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ image: base64Data })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        var responseDiv = document.getElementById('api-response');
+                        responseDiv.innerHTML = '<p>Fish Species: ' + data.predicted_class + '</p>';
+                        document.getElementById('image-display').style.display = 'block';
+                    })
+                    .catch((error) => {
+                        console.error('Error:', error);
+                    });
+                };
+            } else {
+                console.log("No image selected");
+            }
+        }
+    </script>
+</body>
+</html>
 
 </body>
 </html>
